@@ -1,7 +1,8 @@
-package com.example.shoplistappsum
+package com.example.shoplistappsum.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.shoplistappsum.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
