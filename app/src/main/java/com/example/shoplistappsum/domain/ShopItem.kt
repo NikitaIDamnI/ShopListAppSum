@@ -1,9 +1,9 @@
 package com.example.shoplistappsum.domain
 
 data class ShopItem(
-    var name: String,
-    var count: Int,
-    var enable: Boolean,
+    val name: String,
+    val count: Int,
+    val enable: Boolean,
     var id: Int = UNDEFINED_ID ,
     ) {
     companion object{
