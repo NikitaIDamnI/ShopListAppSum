@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
 
    private lateinit var viewModel: MainViewModel
    private lateinit var binding: ActivityMainBinding
+   lateinit var adapter: ShopListAdapter
 
 
 
@@ -20,45 +21,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupShopList()
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this){
-            showList(it)
-        }
-
-    }
-
-    private fun showList(list: List<ShopItem>) = with(binding) {
-
-        llShopList.removeAllViews()
-
-        for (shopItem in list){
-
-            val layoutId = if(shopItem.enable){
-                R.layout.item_shop_enabled
-            }else{
-                R.layout.item_shop_disabled
-            }
-
-            val view = LayoutInflater.from(root.context).inflate(layoutId,binding.llShopList,false)
-            val tvName = view.findViewById<TextView>(R.id.tvName)
-            val tvCount = view.findViewById<TextView>(R.id.tvCount)
-
-            tvName.text = shopItem.name
-            tvCount.text = shopItem.count.toString()
-
-            view.setOnClickListener {
-                viewModel.changeEnableState(shopItem)
-               //true
-            }
-            binding.llShopList.addView(view)
-
-
-
+            adapter.shopList = it
 
         }
 
+
+
     }
+    private fun setupShopList(){
+        val rvShopList = binding.recyclerView
+        adapter = ShopListAdapter()
+        rvShopList.adapter = adapter
+    }
+
+
+
 
 }
