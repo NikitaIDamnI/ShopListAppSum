@@ -5,30 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.domain.ShopItem
 
-class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>() {
+class ShopListAdapter: ListAdapter<ShopItem,ShopListViewHolder>(ShopItemDiffCallback()) {
 
-    var count = 0
-    var shopList = listOf<ShopItem>()
-        set(value) {
-            val callback = ShopItemDifUtil(shopList,value)
-            val diffResult = DiffUtil.calculateDiff(callback)
-            diffResult.dispatchUpdatesTo(this)
-            field = value
-
-        }
     var onShopItemLongClickListener: ((ShopItem) -> Unit)?= null
     var onShopItemClickListener: ((ShopItem) -> Unit)?= null
-
-
-    class ShopListViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val tvCount = view.findViewById<TextView>(R.id.tvCount)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
         val layout = when (viewType) {
@@ -45,15 +30,12 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onBindViewHolder(viewHolder: ShopListViewHolder, position: Int) {
-        Log.d("ShopListAdapter", "onBindViewHolder, count: ${++count}")
 
 
-        val shopItem = shopList[position]
-        val type = if (shopItem.enable) "Active" else {
-            "No Active"
-        }
+        val shopItem = getItem(position)
+        val type = if (shopItem.enable) "Active" else { "No Active" }
 
-        viewHolder.tvName.text = "${shopItem.name} $type"
+        viewHolder.tvName.text = shopItem.name
         viewHolder.tvCount.text = shopItem.count.toString()
 
         viewHolder.view.setOnLongClickListener {
@@ -64,24 +46,15 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
         viewHolder.view.setOnClickListener{
             onShopItemClickListener?.invoke(shopItem)
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = shopList[position]
+        val item = getItem(position)
         return if (item.enable) {
             ENABLE
         } else {
             DISABLED
         }
-    }
-
-    override fun getItemCount(): Int {
-        return shopList.size
-    }
-
-    interface OnShopItemLongClickListener {
-        fun onShopItemLongClickListener()
     }
 
     companion object {
