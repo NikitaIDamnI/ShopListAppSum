@@ -2,18 +2,15 @@ package com.example.shoplistappsum.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityMainBinding
-import com.example.shoplistappsum.domain.ShopItem
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
-    lateinit var adapter: ShopListAdapter
+    private var shopListAdapter: ShopListAdapter ?= null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            adapter.shopList = it
+            shopListAdapter?.shopList = it
 
         }
 
@@ -34,21 +31,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupShopList() {
         val rvShopList = binding.recyclerView
+        with(rvShopList) {
+            shopListAdapter = ShopListAdapter()
+            adapter = shopListAdapter
 
-            adapter = ShopListAdapter()
-            rvShopList.adapter = adapter
-
-            rvShopList.recycledViewPool.setMaxRecycledViews(
+            recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.ENABLE,
                 ShopListAdapter.MAX_PULL_SIZE
             )
 
-            rvShopList.recycledViewPool.setMaxRecycledViews(
+            recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.DISABLED,
                 ShopListAdapter.MAX_PULL_SIZE
             )
+        }
+       shopListAdapter?.onShopItemLongClickListener ={
+           viewModel.changeEnableState(it)
 
+       }
 
+        shopListAdapter?.onShopItemClickListener={
+            Toast.makeText(this,it.toString(),Toast.LENGTH_SHORT).show()
+        }
 
     }
 }

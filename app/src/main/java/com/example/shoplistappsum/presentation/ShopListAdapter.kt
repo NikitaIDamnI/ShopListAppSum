@@ -17,6 +17,9 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
             field = value
             notifyDataSetChanged()
         }
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)?= null
+    var onShopItemClickListener: ((ShopItem) -> Unit)?= null
+
 
     class ShopListViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         val tvName = view.findViewById<TextView>(R.id.tvName)
@@ -25,7 +28,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
         Log.d("ShopListAdapter", "onCreateViewHolder, count: ${count++}")
-        val layout = when(viewType){
+        val layout = when (viewType) {
             ENABLE -> R.layout.item_shop_enabled
             DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("Unknown view type: $viewType")
@@ -42,31 +45,42 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
 
 
         val shopItem = shopList[position]
-       val type =  if(shopItem.enable)"Active" else {"No Active"}
+        val type = if (shopItem.enable) "Active" else {
+            "No Active"
+        }
 
         viewHolder.tvName.text = "${shopItem.name} $type"
         viewHolder.tvCount.text = shopItem.count.toString()
 
-        viewHolder.view.setOnClickListener {
+        viewHolder.view.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
             true
+        }
+
+        viewHolder.view.setOnClickListener{
+            onShopItemClickListener?.invoke(shopItem)
         }
 
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = shopList[position]
-        return if (item.enable){
+        return if (item.enable) {
             ENABLE
-        }else{
+        } else {
             DISABLED
         }
     }
 
     override fun getItemCount(): Int {
-       return shopList.size
+        return shopList.size
     }
 
-    companion object{
+    interface OnShopItemLongClickListener {
+        fun onShopItemLongClickListener()
+    }
+
+    companion object {
         const val ENABLE = 0
         const val DISABLED = 1
         const val MAX_PULL_SIZE = 20
