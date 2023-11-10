@@ -22,8 +22,14 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
+
+        val layout = when(viewType){
+            ENABLE -> R.layout.item_shop_enabled
+            DISABLED -> R.layout.item_shop_disabled
+            else -> throw RuntimeException("Unknown view type: $viewType")
+        }
         val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_shop_disabled,
+            layout,
             parent,
             false
         )
@@ -31,17 +37,36 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onBindViewHolder(viewHolder: ShopListViewHolder, position: Int) {
+
+
         val shopItem = shopList[position]
-        viewHolder.tvName.text = shopItem.name
+       val position =  if(shopItem.enable)"Active" else {"No Active"}
+
+        viewHolder.tvName.text = "${shopItem.name} $position"
         viewHolder.tvCount.text = shopItem.count.toString()
+
         viewHolder.view.setOnClickListener {
             true
         }
 
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val item = shopList[position]
+        return if (item.enable){
+            ENABLE
+        }else{
+            DISABLED
+        }
+    }
+
     override fun getItemCount(): Int {
        return shopList.size
+    }
+
+    companion object{
+        const val ENABLE = 0
+        const val DISABLED = 1
     }
 
 
