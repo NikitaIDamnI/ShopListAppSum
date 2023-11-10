@@ -1,4 +1,4 @@
-package com.example.shoplistappsum.presentation
+package com.example.shoplistappsum.presentation.recyclerview
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.shoplistappsum.domain.ShopItem

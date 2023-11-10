@@ -1,16 +1,12 @@
-package com.example.shoplistappsum.presentation
+package com.example.shoplistappsum.presentation.recyclerview
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.domain.ShopItem
 
-class ShopListAdapter: ListAdapter<ShopItem,ShopListViewHolder>(ShopItemDiffCallback()) {
+class ShopListAdapter: ListAdapter<ShopItem, ShopListViewHolder>(ShopItemDiffCallback()) {
 
     var onShopItemLongClickListener: ((ShopItem) -> Unit)?= null
     var onShopItemClickListener: ((ShopItem) -> Unit)?= null
@@ -33,7 +29,6 @@ class ShopListAdapter: ListAdapter<ShopItem,ShopListViewHolder>(ShopItemDiffCall
 
 
         val shopItem = getItem(position)
-        val type = if (shopItem.enable) "Active" else { "No Active" }
 
         viewHolder.tvName.text = shopItem.name
         viewHolder.tvCount.text = shopItem.count.toString()

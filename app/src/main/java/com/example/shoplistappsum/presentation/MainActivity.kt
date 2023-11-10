@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplistappsum.databinding.ActivityMainBinding
+import com.example.shoplistappsum.presentation.recyclerview.ShopListAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,13 +66,13 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupClickListener() {
-        shopListAdapter?.onShopItemClickListener = {
+        shopListAdapter.onShopItemClickListener = {
             Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setupLongClickListener() {
-        shopListAdapter?.onShopItemLongClickListener = {
+        shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
 
         }
