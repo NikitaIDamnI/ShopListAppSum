@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.domain.ShopItem
@@ -14,8 +15,11 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     var count = 0
     var shopList = listOf<ShopItem>()
         set(value) {
+            val callback = ShopItemDifUtil(shopList,value)
+            val diffResult = DiffUtil.calculateDiff(callback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
+
         }
     var onShopItemLongClickListener: ((ShopItem) -> Unit)?= null
     var onShopItemClickListener: ((ShopItem) -> Unit)?= null
@@ -27,7 +31,6 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
-        Log.d("ShopListAdapter", "onCreateViewHolder, count: ${count++}")
         val layout = when (viewType) {
             ENABLE -> R.layout.item_shop_enabled
             DISABLED -> R.layout.item_shop_disabled
@@ -42,6 +45,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onBindViewHolder(viewHolder: ShopListViewHolder, position: Int) {
+        Log.d("ShopListAdapter", "onBindViewHolder, count: ${++count}")
 
 
         val shopItem = shopList[position]
