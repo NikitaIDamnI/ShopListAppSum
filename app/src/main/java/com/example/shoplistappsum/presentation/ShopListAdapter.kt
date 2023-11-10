@@ -1,5 +1,6 @@
 package com.example.shoplistappsum.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.example.shoplistappsum.domain.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>() {
 
+    var count = 0
     var shopList = listOf<ShopItem>()
         set(value) {
             field = value
@@ -22,7 +24,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
-
+        Log.d("ShopListAdapter", "onCreateViewHolder, count: ${count++}")
         val layout = when(viewType){
             ENABLE -> R.layout.item_shop_enabled
             DISABLED -> R.layout.item_shop_disabled
