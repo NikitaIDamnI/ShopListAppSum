@@ -42,9 +42,9 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
 
 
         val shopItem = shopList[position]
-       val position =  if(shopItem.enable)"Active" else {"No Active"}
+       val type =  if(shopItem.enable)"Active" else {"No Active"}
 
-        viewHolder.tvName.text = "${shopItem.name} $position"
+        viewHolder.tvName.text = "${shopItem.name} $type"
         viewHolder.tvCount.text = shopItem.count.toString()
 
         viewHolder.view.setOnClickListener {
@@ -69,6 +69,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     companion object{
         const val ENABLE = 0
         const val DISABLED = 1
+        const val MAX_PULL_SIZE = 20
     }
 
 
