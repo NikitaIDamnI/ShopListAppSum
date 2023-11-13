@@ -20,8 +20,22 @@ class ShopItemViewModel : ViewModel() {
     private val editingShopItemUseCase = EditingShopItemUseCase(repository)
 
     private var _errorInputName = MutableLiveData<Boolean>()
-    val errorInputName :LiveData<Boolean>
+    val errorInputName: LiveData<Boolean>
         get() = _errorInputName
+
+    private var _errorInputCount = MutableLiveData<Boolean>()
+    val errorInputCount: LiveData<Boolean>
+        get() = _errorInputCount
+
+
+    private var _shopItem = MutableLiveData<ShopItem>()
+    val shopItem: LiveData<ShopItem>
+        get() = _shopItem
+
+    private val _shouldCloseActivity = MutableLiveData<Unit>()
+    val shouldCloseActivity: LiveData<Unit>
+        get() = _shouldCloseActivity
+
 
     fun addShopList(input1: String?, input2: String?) {
         val name = parseName(input1)
@@ -30,21 +44,25 @@ class ShopItemViewModel : ViewModel() {
         if (fieldsValid) {
             addShopListUseCase.addShopList(ShopItem(name, count, true))
         }
+        finishWork()
     }
 
     fun getShopItem(shopItemId: Int) {
-        getShopItemUseCase.getShopItem(shopItemId)
+        val item = getShopItemUseCase.getShopItem(shopItemId)
+        _shopItem.value = item
     }
 
-    fun editingShopItem(shopItem:ShopItem,input1: String?, input2: String?) {
+    fun editingShopItem(shopItem: ShopItem, input1: String?, input2: String?) {
         val name = parseName(input1)
         val count = parseCount(input2)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
-            val newShopItem = shopItem.copy(name= name, count= count)
-            editingShopItemUseCase.editingShopList(newShopItem)
+            _shopItem.value?.let{
+                val item = it.copy(name = name, count = count)
+                editingShopItemUseCase.editingShopList(item)
+                finishWork()
+            }
         }
-
 
     }
 
@@ -64,17 +82,32 @@ class ShopItemViewModel : ViewModel() {
     private fun validateInput(name: String, count: Int): Boolean {
         var result = true
         if (name.isBlank()) {
-            //TODO: show error input name
+            _errorInputName.value = true
             result = false
         }
 
         if (count < 0) {
-            //TODO: show error input name
+            _errorInputCount.value = true
             result = false
         }
 
         return result
     }
+
+    fun resetErrorInputName() {
+        _errorInputName.value = false
+
+    }
+
+    fun resetErrorInputCount() {
+        _errorInputCount.value = false
+
+    }
+
+    private fun finishWork(){
+        _shouldCloseActivity.value = Unit
+    }
+
 
 }
 
