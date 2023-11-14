@@ -2,7 +2,6 @@ package com.example.shoplistappsum.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
     lateinit var shopListAdapter: ShopListAdapter
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        binding.bAddShopItem.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+
+        }
 
     }
 
@@ -67,7 +72,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+
+            val intent = ShopItemActivity.newIntentEditItem(this,it.id)
+            startActivity(intent)
+
         }
     }
 
