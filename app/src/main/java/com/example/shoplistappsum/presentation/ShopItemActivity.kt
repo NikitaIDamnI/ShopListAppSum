@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoplistappsum.databinding.ActivityShopItemBinding
 import com.example.shoplistappsum.domain.ShopItem
@@ -23,11 +24,44 @@ class ShopItemActivity : AppCompatActivity() {
         setContentView(binding.root)
         parsIntent()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        addTextChangeListeners()
+        launcher()
+        observeViewModel()
+    }
 
+   private fun observeViewModel(){
+       shopItemViewModel.errorInputCount.observe(this){
+           val message = if(it){
+               "Entity"
+           }else{
+               null
+           }
+           binding.tilCount.error = message
+       }
+       shopItemViewModel.errorInputName.observe(this){
+           val message = if(it){
+               "Entity"
+           }else{
+               null
+           }
+           binding.tilName.error = message
+       }
+
+       shopItemViewModel.shouldCloseActivity.observe(this){
+           finish()
+       }
+   }
+    private fun launcher() {
         when (screenMod) {
             MODE_EDIT -> launchEditMode()
             MODE_ADD -> launchAddMode()
         }
+    }
+
+    private fun addTextChangeListeners() {
+        binding.edName.doOnTextChanged { text, start, before, count -> shopItemViewModel.resetErrorInputName() }
+        binding.edCount.doOnTextChanged { text, start, before, count -> shopItemViewModel.resetErrorInputCount() }
+
     }
 
 
@@ -40,52 +74,23 @@ class ShopItemActivity : AppCompatActivity() {
         }
 
         binding.button.setOnClickListener {
-            if(error()) {
-                val name = binding.edName.text.toString()
-                val count = binding.edCount.text.toString()
-                shopItemViewModel.editingShopItem(name, count)
-                finish()
-            }
+
+            val name = binding.edName.text.toString()
+            val count = binding.edCount.text.toString()
+            shopItemViewModel.editingShopItem(name, count)
+
         }
     }
 
     private fun launchAddMode() {
         binding.button.setOnClickListener {
-            if(error()) {
-                val name = binding.edName.text.toString()
-                val count = binding.edCount.text.toString()
-                shopItemViewModel.addShopList(name, count)
-                finish()
-            }
+
+            val name = binding.edName.text.toString()
+            val count = binding.edCount.text.toString()
+            shopItemViewModel.addShopList(name, count)
+
 
         }
-
-    }
-
-    private fun error(): Boolean {
-        var nameBool = false
-        var countBool = false
-
-        if(binding.edName.text.toString().isEmpty()){
-            binding.tilName.error="Entity"
-        }else{
-            nameBool = true
-        }
-
-        if (binding.edCount.text.toString().isEmpty()){
-            binding.tilCount.error="Entity"
-        }else{
-            countBool = true
-        }
-
-        return if(nameBool && countBool){
-            shopItemViewModel.resetErrorInputName()
-            shopItemViewModel.resetErrorInputCount()
-            true
-        }else{
-            false
-        }
-
 
     }
 
