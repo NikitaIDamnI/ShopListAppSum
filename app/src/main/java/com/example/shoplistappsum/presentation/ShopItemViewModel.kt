@@ -52,7 +52,7 @@ class ShopItemViewModel : ViewModel() {
         _shopItem.value = item
     }
 
-    fun editingShopItem(shopItem: ShopItem, input1: String?, input2: String?) {
+    fun editingShopItem(input1: String?, input2: String?) {
         val name = parseName(input1)
         val count = parseCount(input2)
         val fieldsValid = validateInput(name, count)
