@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
+import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityShopItemBinding
 import com.example.shoplistappsum.domain.ShopItem
 
@@ -24,73 +25,23 @@ class ShopItemActivity : AppCompatActivity() {
         setContentView(binding.root)
         parsIntent()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
-        addTextChangeListeners()
         launcher()
-        observeViewModel()
+
     }
 
-   private fun observeViewModel(){
-       shopItemViewModel.errorInputCount.observe(this){
-           val message = if(it){
-               "Entity"
-           }else{
-               null
-           }
-           binding.tilCount.error = message
-       }
-       shopItemViewModel.errorInputName.observe(this){
-           val message = if(it){
-               "Entity"
-           }else{
-               null
-           }
-           binding.tilName.error = message
-       }
 
-       shopItemViewModel.shouldCloseActivity.observe(this){
-           finish()
-       }
-   }
+
     private fun launcher() {
-        when (screenMod) {
-            MODE_EDIT -> launchEditMode()
-            MODE_ADD -> launchAddMode()
-        }
-    }
-
-    private fun addTextChangeListeners() {
-        binding.edName.doOnTextChanged { text, start, before, count -> shopItemViewModel.resetErrorInputName() }
-        binding.edCount.doOnTextChanged { text, start, before, count -> shopItemViewModel.resetErrorInputCount() }
-
-    }
-
-
-    private fun launchEditMode() {
-        shopItemViewModel.getShopItem(shopItemId)
-
-        shopItemViewModel.shopItem.observe(this) {
-            binding.edName.setText(it.name)
-            binding.edCount.setText(it.count.toString())
-        }
-
-        binding.button.setOnClickListener {
-
-            val name = binding.edName.text.toString()
-            val count = binding.edCount.text.toString()
-            shopItemViewModel.editingShopItem(name, count)
+        val fragment = when (screenMod) {
+            MODE_EDIT -> ShopItemFragment.newInstanceEditItem(shopItemId)
+            MODE_ADD -> ShopItemFragment.newInstanceAddItem()
+            else -> throw RuntimeException("Unknown screen mode $screenMod")
 
         }
-    }
+        supportFragmentManager.beginTransaction()
+            .add(R.id.shop_item_container,fragment)
+            .commit()
 
-    private fun launchAddMode() {
-        binding.button.setOnClickListener {
-
-            val name = binding.edName.text.toString()
-            val count = binding.edCount.text.toString()
-            shopItemViewModel.addShopList(name, count)
-
-
-        }
 
     }
 
