@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityShopItemBinding
@@ -23,6 +22,7 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityShopItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         parsIntent()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         launcher()

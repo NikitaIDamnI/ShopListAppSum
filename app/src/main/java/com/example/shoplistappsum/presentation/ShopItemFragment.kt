@@ -1,7 +1,6 @@
 package com.example.shoplistappsum.presentation
 
-import android.content.Context
-import android.content.Intent
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +11,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.shoplistappsum.databinding.FragmentShopItemBinding
 import com.example.shoplistappsum.domain.ShopItem
 
-class ShopItemFragment(
-    private var screenMod: String = UNKNOWN_SCREEN_MODE,
-    private var shopItemId: Int = ShopItem.UNDEFINED_ID,
-    ) : Fragment() {
+class ShopItemFragment : Fragment() {
 
     private lateinit var binding: FragmentShopItemBinding
     private lateinit var shopItemViewModel: ShopItemViewModel
 
+    private var screenMod: String = UNKNOWN_SCREEN_MODE
+    private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +37,6 @@ class ShopItemFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        parseParams()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         addTextChangeListeners()
         launcher()
@@ -111,50 +113,53 @@ class ShopItemFragment(
 
 
     private fun parseParams() {
-        if (screenMod != MODE_EDIT && screenMod != MODE_ADD) {
-            throw RuntimeException("Param screen mode is absent")
+        val args = requireArguments()
+        if (!args.containsKey(SCREEN_MODE)) {
+            throw RuntimeException("Param screen mode is abcent")
         }
-        if (screenMod == MODE_EDIT && shopItemId == ShopItem.UNDEFINED_ID) {
-            throw RuntimeException("Param shop item id is absent")
 
+        val mode = args.getString(SCREEN_MODE)
+
+            if (mode != (MODE_ADD) && mode != (MODE_EDIT)) {
+                throw RuntimeException("Unknown screen mode $mode")
+            }
+            screenMod = mode
+
+        if (mode == MODE_EDIT) {
+            if (!args.containsKey(SHOP_ITEM_ID)) {
+                throw RuntimeException("Param shop item id is absent")
+            }
+            shopItemId = args.getInt(SHOP_ITEM_ID,ShopItem.UNDEFINED_ID)
         }
+
     }
 
 
-
-
-        companion object{
-        private const val EXTRA_SCREEN_MODE = "extra_mode"
+    companion object {
+        private const val SCREEN_MODE = "extra_mode"
         private const val MODE_ADD = "mode_add"
         private const val MODE_EDIT = "mode_edit"
-        private const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
+        private const val SHOP_ITEM_ID = "extra_shop_item_id"
         private const val UNKNOWN_SCREEN_MODE = ""
 
-        fun newInstanceAddItem():ShopItemFragment {
+        fun newInstanceAddItem(): ShopItemFragment {
 
-            return ShopItemFragment(MODE_ADD)
-        }
-        fun newInstanceEditItem(shopItemId: Int): ShopItemFragment{
+            return ShopItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_ADD)
+                }
+            }
 
-            return ShopItemFragment(MODE_EDIT, shopItemId)
-        }
-
-/*
-        fun newIntentAddItem(context: Context): Intent {
-            val intent = Intent(context, ShopItemActivity::class.java)
-            intent.putExtra(EXTRA_SCREEN_MODE, MODE_ADD)
-            return intent
 
         }
 
-        fun newIntentEditItem(context: Context, shopItemId: Int): Intent {
-            val intent = Intent(context, ShopItemActivity::class.java)
-            intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
-            intent.putExtra(EXTRA_SHOP_ITEM_ID, shopItemId)
-            return intent
-
+        fun newInstanceEditItem(shopItemId: Int): ShopItemFragment {
+            return ShopItemFragment().apply {
+                arguments = Bundle().apply {
+                    putString(SCREEN_MODE, MODE_EDIT)
+                    putInt(SHOP_ITEM_ID, shopItemId)
+                }
+            }
         }
-
- */
     }
 }
