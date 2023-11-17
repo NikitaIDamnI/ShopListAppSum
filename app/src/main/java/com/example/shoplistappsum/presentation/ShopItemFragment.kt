@@ -2,6 +2,7 @@ package com.example.shoplistappsum.presentation
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +22,8 @@ class ShopItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        parseParams()
+        Log.d("Mylog","onCreate")
+        if(savedInstanceState == null)  parseParams()
     }
 
     override fun onCreateView(

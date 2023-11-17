@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityShopItemBinding
@@ -22,7 +23,6 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityShopItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         parsIntent()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         launcher()
@@ -39,7 +39,7 @@ class ShopItemActivity : AppCompatActivity() {
 
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container,fragment)
+            .replace(R.id.shop_item_container,fragment)
             .commit()
 
 
