@@ -2,6 +2,7 @@ package com.example.shoplistappsum.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +12,7 @@ import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityMainBinding
 import com.example.shoplistappsum.presentation.recyclerview.ShopListAdapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
@@ -22,14 +23,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         shopItemContainer = binding.shopItemContainer
-
-
-
         setContentView(binding.root)
+
         setupShopList()
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
 
@@ -39,7 +37,8 @@ class MainActivity : AppCompatActivity() {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
-            }else{
+            } else {
+
                 launcherFragment(ShopItemFragment.newInstanceAddItem())
             }
 
@@ -97,13 +96,14 @@ class MainActivity : AppCompatActivity() {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentEditItem(this, it.id)
                 startActivity(intent)
-            }else{
+            } else {
                 launcherFragment(ShopItemFragment.newInstanceEditItem(it.id))
             }
 
 
         }
     }
+
 
     private fun setupLongClickListener() {
         shopListAdapter.onShopItemLongClickListener = {
@@ -125,4 +125,11 @@ class MainActivity : AppCompatActivity() {
         )
 
     }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity,"Success",Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
+    }
+
+
 }

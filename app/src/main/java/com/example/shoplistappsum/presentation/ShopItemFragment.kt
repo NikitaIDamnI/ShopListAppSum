@@ -1,8 +1,8 @@
 package com.example.shoplistappsum.presentation
 
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +17,23 @@ class ShopItemFragment : Fragment() {
     private lateinit var binding: FragmentShopItemBinding
     private lateinit var shopItemViewModel: ShopItemViewModel
 
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
     private var screenMod: String = UNKNOWN_SCREEN_MODE
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException ("Activity must implement OnEditingFinishedListener")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("Mylog","onCreate")
-        if(savedInstanceState == null)  parseParams()
+        if (savedInstanceState == null) parseParams()
     }
 
     override fun onCreateView(
@@ -65,7 +75,7 @@ class ShopItemFragment : Fragment() {
         }
 
         shopItemViewModel.shouldCloseActivity.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
 
         }
     }
@@ -121,19 +131,24 @@ class ShopItemFragment : Fragment() {
         }
 
         val mode = args.getString(SCREEN_MODE)
+        if (mode != (MODE_ADD) && mode != (MODE_EDIT)) {
+            throw RuntimeException("Unknown screen mode $mode")
+        }
+        screenMod = mode
 
-            if (mode != (MODE_ADD) && mode != (MODE_EDIT)) {
-                throw RuntimeException("Unknown screen mode $mode")
-            }
-            screenMod = mode
 
         if (mode == MODE_EDIT) {
             if (!args.containsKey(SHOP_ITEM_ID)) {
                 throw RuntimeException("Param shop item id is absent")
             }
-            shopItemId = args.getInt(SHOP_ITEM_ID,ShopItem.UNDEFINED_ID)
+            shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
 
+    }
+
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
 
