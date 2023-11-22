@@ -2,45 +2,66 @@ package com.example.shoplistappsum.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityMainBinding
 import com.example.shoplistappsum.presentation.recyclerview.ShopListAdapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
     lateinit var shopListAdapter: ShopListAdapter
-
-
+    private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        shopItemContainer = binding.shopItemContainer
         setContentView(binding.root)
+
         setupShopList()
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
 
         }
 
         binding.bAddShopItem.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+            if (isOnePaneMode()) {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            } else {
+
+                launcherFragment(ShopItemFragment.newInstanceAddItem())
+            }
 
         }
 
     }
 
+    private fun isOnePaneMode(): Boolean {
+        return shopItemContainer == null
+    }
+
+    private fun launcherFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .add(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun setupShopList() {
         val rvShopList = binding.recyclerView
         shopListAdapter = ShopListAdapter()
-        rvShopList. adapter = shopListAdapter
+        rvShopList.adapter = shopListAdapter
 
         setupPullAdapter(rvShopList)
         setupLongClickListener()
@@ -72,12 +93,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
+            if (isOnePaneMode()) {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            } else {
+                launcherFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            }
 
-            val intent = ShopItemActivity.newIntentEditItem(this,it.id)
-            startActivity(intent)
 
         }
     }
+
 
     private fun setupLongClickListener() {
         shopListAdapter.onShopItemLongClickListener = {
@@ -86,17 +112,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupPullAdapter(rvShopList:RecyclerView) {
-       
-        rvShopList. recycledViewPool.setMaxRecycledViews(
-                ShopListAdapter.ENABLE,
-                ShopListAdapter.MAX_PULL_SIZE
-            )
+    private fun setupPullAdapter(rvShopList: RecyclerView) {
 
-        rvShopList. recycledViewPool.setMaxRecycledViews(
-                ShopListAdapter.DISABLED,
-                ShopListAdapter.MAX_PULL_SIZE
-            )
-       
+        rvShopList.recycledViewPool.setMaxRecycledViews(
+            ShopListAdapter.ENABLE,
+            ShopListAdapter.MAX_PULL_SIZE
+        )
+
+        rvShopList.recycledViewPool.setMaxRecycledViews(
+            ShopListAdapter.DISABLED,
+            ShopListAdapter.MAX_PULL_SIZE
+        )
+
     }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity,"Success",Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
+    }
+
+
 }

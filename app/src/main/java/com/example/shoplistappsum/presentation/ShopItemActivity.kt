@@ -4,12 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoplistappsum.R
 import com.example.shoplistappsum.databinding.ActivityShopItemBinding
 import com.example.shoplistappsum.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var binding: ActivityShopItemBinding
     private lateinit var shopItemViewModel: ShopItemViewModel
@@ -22,11 +23,15 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityShopItemBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         parsIntent()
         shopItemViewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         launcher()
 
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this,"Success", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
 
@@ -39,7 +44,7 @@ class ShopItemActivity : AppCompatActivity() {
 
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container,fragment)
+            .replace(R.id.shop_item_container,fragment)
             .commit()
 
 
