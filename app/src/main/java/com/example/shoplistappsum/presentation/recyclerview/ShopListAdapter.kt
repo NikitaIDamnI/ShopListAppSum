@@ -2,8 +2,12 @@ package com.example.shoplistappsum.presentation.recyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import com.example.shoplistappsum.R
+import com.example.shoplistappsum.databinding.ItemShopDisabledBinding
+import com.example.shoplistappsum.databinding.ItemShopEnabledBinding
 import com.example.shoplistappsum.domain.ShopItem
 
 class ShopListAdapter: ListAdapter<ShopItem, ShopListViewHolder>(ShopItemDiffCallback()) {
@@ -17,7 +21,8 @@ class ShopListAdapter: ListAdapter<ShopItem, ShopListViewHolder>(ShopItemDiffCal
             DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("Unknown view type: $viewType")
         }
-        val view = LayoutInflater.from(parent.context).inflate(
+        val view = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
             layout,
             parent,
             false
@@ -26,20 +31,26 @@ class ShopListAdapter: ListAdapter<ShopItem, ShopListViewHolder>(ShopItemDiffCal
     }
 
     override fun onBindViewHolder(viewHolder: ShopListViewHolder, position: Int) {
-
-
         val shopItem = getItem(position)
+        val binding = viewHolder.binding
 
-        viewHolder.tvName.text = shopItem.name
-        viewHolder.tvCount.text = shopItem.count.toString()
-
-        viewHolder.view.setOnLongClickListener {
+        binding.root.setOnLongClickListener {
             onShopItemLongClickListener?.invoke(shopItem)
             true
         }
-
-        viewHolder.view.setOnClickListener{
+        binding.root.setOnClickListener{
             onShopItemClickListener?.invoke(shopItem)
+        }
+
+        when(binding){
+            is ItemShopEnabledBinding -> {
+                binding.tvName.text = shopItem.name
+                binding.tvCount.text = shopItem.count.toString()
+            }
+            is ItemShopDisabledBinding -> {
+                binding.tvName.text = shopItem.name
+                binding.tvCount.text = shopItem.count.toString()
+            }
         }
     }
 
