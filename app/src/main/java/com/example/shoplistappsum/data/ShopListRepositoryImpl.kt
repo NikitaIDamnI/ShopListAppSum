@@ -36,8 +36,10 @@ class ShopListRepositoryImpl
         return mapper.mapDbModelToEntity(dpModel)
     }
 
-    override fun getShopList() = shopListDao.getShopList().map {
-        mapper.mapListDbModelToEntity(it)
+    override fun getShopList() = MediatorLiveData<List<ShopItem>>().apply {
+        addSource(shopListDao.getShopList()){
+            mapper.mapListDbModelToEntity(it)
+    }
     }
 
 

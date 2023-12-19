@@ -1,5 +1,7 @@
 package com.example.shoplistappsum.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,9 +13,9 @@ import com.example.shoplistappsum.domain.ShopItem
 import java.lang.Exception
 
 
-class ShopItemViewModel : ViewModel() {
+class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = ShopListRepositoryImpl
+    private val repository = ShopListRepositoryImpl(application)
 
     private val addShopListUseCase = AddShopListUseCase(repository)
     private val getShopItemUseCase = GetShopItemUseCase(repository)
@@ -43,8 +45,8 @@ class ShopItemViewModel : ViewModel() {
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
             addShopListUseCase.addShopList(ShopItem(name, count, true))
+            finishWork()
         }
-        finishWork()
     }
 
     fun getShopItem(shopItemId: Int) {
