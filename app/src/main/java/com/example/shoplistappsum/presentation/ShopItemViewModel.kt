@@ -4,16 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoplistappsum.data.ShopListRepositoryImpl
 import com.example.shoplistappsum.domain.AddShopListUseCase
 import com.example.shoplistappsum.domain.EditingShopItemUseCase
 import com.example.shoplistappsum.domain.GetShopItemUseCase
 import com.example.shoplistappsum.domain.ShopItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
