@@ -1,7 +1,9 @@
 package com.example.shoplistappsum.data
 
 import android.app.Application
+
 import androidx.lifecycle.MediatorLiveData
+
 import com.example.shoplistappsum.domain.ShopItem
 import com.example.shoplistappsum.domain.ShopListRepository
 
@@ -36,6 +38,7 @@ class ShopListRepositoryImpl
           value =  mapper.mapListDbModelToEntity(it)
     }
     }
+
 
 
 }

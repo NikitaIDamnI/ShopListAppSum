@@ -29,8 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val dp = Room.databaseBuilder(
                     application,
                     AppDatabase::class.java,
-                    NAME)
-                    .build()
+                    NAME).build()
 
                 INSTANCE = dp
                 return dp

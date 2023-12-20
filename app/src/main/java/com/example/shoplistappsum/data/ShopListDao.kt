@@ -9,6 +9,7 @@ import androidx.room.Query
 @Dao
 interface ShopListDao {
     @Query("SELECT * FROM shop_items")
+
      fun getShopList(): LiveData<List<ShopItemDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -20,4 +21,5 @@ interface ShopListDao {
 
     @Query("SELECT * FROM shop_items WHERE id=:shopItemId LIMIT 1")
     suspend fun  getShopItem(shopItemId: Int): ShopItemDbModel
+
 }
