@@ -5,11 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.shoplistappsum.data.ShopListRepositoryImpl
 import com.example.shoplistappsum.domain.AddShopListUseCase
 import com.example.shoplistappsum.domain.EditingShopItemUseCase
 import com.example.shoplistappsum.domain.GetShopItemUseCase
 import com.example.shoplistappsum.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 
@@ -39,19 +44,24 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         get() = _shouldCloseActivity
 
 
+
     fun addShopList(input1: String?, input2: String?) {
         val name = parseName(input1)
         val count = parseCount(input2)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid) {
-            addShopListUseCase.addShopList(ShopItem(name, count, true))
-            finishWork()
+            viewModelScope.launch {
+                addShopListUseCase.addShopList(ShopItem(name, count, true))
+                finishWork()
+            }
         }
     }
 
     fun getShopItem(shopItemId: Int) {
-        val item = getShopItemUseCase.getShopItem(shopItemId)
-        _shopItem.value = item
+        viewModelScope.launch {
+            val item = getShopItemUseCase.getShopItem(shopItemId)
+            _shopItem.value = item
+        }
     }
 
     fun editingShopItem(input1: String?, input2: String?) {
@@ -61,8 +71,11 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         if (fieldsValid) {
             _shopItem.value?.let{
                 val item = it.copy(name = name, count = count)
-                editingShopItemUseCase.editingShopList(item)
-                finishWork()
+                viewModelScope.launch {
+                    editingShopItemUseCase.editingShopList(item)
+                    finishWork()
+                }
+
             }
         }
 
@@ -109,7 +122,6 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private fun finishWork(){
         _shouldCloseActivity.value = Unit
     }
-
 
 }
 

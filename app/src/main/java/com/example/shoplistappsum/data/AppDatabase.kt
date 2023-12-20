@@ -30,7 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
                     application,
                     AppDatabase::class.java,
                     NAME)
-                    .allowMainThreadQueries()
                     .build()
 
                 INSTANCE = dp
