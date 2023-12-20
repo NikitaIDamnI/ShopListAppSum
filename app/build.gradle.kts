@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -36,6 +37,7 @@ android {
     buildFeatures{
         dataBinding = true
     }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {
@@ -53,6 +55,7 @@ dependencies {
     //Room
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation ("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1"
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
